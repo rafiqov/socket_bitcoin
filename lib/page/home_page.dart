@@ -1,46 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sokketnetwork/controllers/home_controller.dart';
 import 'package:sokketnetwork/models/btc_usd_model.dart';
-import 'package:sokketnetwork/services/socket_service.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
+  static const String id = '/home';
   const HomePage({Key? key}) : super(key: key);
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String response = 'No data';
-  Bitcoin? bitcoin;
-
-
-  _initSocketService() {
-    SocketService.connectServer();
-
-    SocketService.channel.stream.listen((event) {
-      setState(() {
-        response = event.toString();
-        bitcoin = bitcoinFromJson(response);
-      });
-    }, onError: (error) {
-      setState(() {
-        response = error.toString();
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initSocketService();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(20),
-        child: Center(child: liveTrade(bitcoin: bitcoin)),
+        child: GetBuilder<HomeController>(
+            init: HomeController(),
+            builder: (controller) {
+              return Center(child: liveTrade(bitcoin: controller.bitcoin));
+            }),
       ),
     );
   }

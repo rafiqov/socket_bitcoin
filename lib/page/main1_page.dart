@@ -7,13 +7,13 @@ import 'package:sokketnetwork/services/utils.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class MainPage extends GetView<MainController> {
-  static const String id = '/main';
+  static const String id = '/main1';
+
   @override
   // TODO: implement controller
   MainController get controller => super.controller;
 
   const MainPage({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -34,43 +34,38 @@ class MainPage extends GetView<MainController> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
           ),
-          GetX<MainController>(
-            init: controller,
-            builder: (_controller) {
-
-              Get.log('Controller: '+_controller.chartData.toString());
-              return Container(
+          Obx(() => Container(
                 padding: const EdgeInsets.all(20),
                 child: Center(
                     child: Column(
                   children: [
                     SfCartesianChart(
-                        zoomPanBehavior: _controller.zoomPanBehavior.value,
-                        tooltipBehavior:_controller.tooltipBehavior.value,
+                        zoomPanBehavior: controller.zoomPanBehavior.value,
+                        tooltipBehavior: controller.tooltipBehavior.value,
                         enableAxisAnimation: true,
-                        legend:
-                            Legend(isVisible: true, position: LegendPosition.top),
+                        legend: Legend(
+                            isVisible: true, position: LegendPosition.top),
                         backgroundColor: Colors.indigo.shade100,
                         plotAreaBorderWidth: 0,
                         primaryXAxis: NumericAxis(
                             crossesAt: 0,
-                                  anchorRangeToVisiblePoints: false,
-                                  isVisible: true,
-                                  majorGridLines: const MajorGridLines(width: 0)),
-                              primaryYAxis: NumericAxis(
-                                  crossesAt: 0,
-                                  majorTickLines: const MajorTickLines(
-                                      color: Colors.transparent),
-                                  axisLine: const AxisLine(width: 0),
-                                  minimum: _controller.chartData.length > 2
-                                      ? (_controller.chartData[1].data!.price! - 300.0)
-                                      : 47000,
-                                  maximum: _controller.chartData.length > 2
-                                      ? (_controller.chartData[1].data!.price! + 300.0)
-                                      : 48000),
-                              series: <LineSeries<Bitcoin, num>>[
-                                LineSeries<Bitcoin, num>(
-                                    dataSource: _controller.chartData,
+                            anchorRangeToVisiblePoints: false,
+                            isVisible: true,
+                            majorGridLines: const MajorGridLines(width: 0)),
+                        primaryYAxis: NumericAxis(
+                            crossesAt: 0,
+                            majorTickLines:
+                                const MajorTickLines(color: Colors.transparent),
+                            axisLine: const AxisLine(width: 0),
+                            minimum: controller.chartData.length > 2
+                                ? (controller.chartData.value[1].data!.price! - 300.0)
+                                : 47000,
+                            maximum: controller.chartData.length > 2
+                                ? (controller.chartData.value[1].data!.price! + 300.0)
+                                : 48000),
+                        series: <LineSeries<Bitcoin, num>>[
+                          LineSeries<Bitcoin, num>(
+                              dataSource: controller.chartData.value,
                               xValueMapper: (Bitcoin btc, number) => number,
                               yValueMapper: (Bitcoin btc, _) => btc.data?.price,
                               markerSettings: const MarkerSettings(
@@ -79,18 +74,20 @@ class MainPage extends GetView<MainController> {
                               enableTooltip: true,
                               legendItemText: "BTC - USD",
                               isVisible: true,
-                              dataLabelMapper: (Bitcoin btc, _) => Utils.getHourMin(
-                                  btc.data?.timestamp ?? "1648710969"),
+                              dataLabelMapper: (Bitcoin btc, _) =>
+                                  Utils.getHourMin(
+                                      btc.data?.timestamp ?? "1648710969"),
                               dataLabelSettings: const DataLabelSettings(
                                   borderRadius: 0, isVisible: false))
-                              ]),
-                          const SizedBox(height: 10),
-                          if (_controller.chartData.length > 1)
-                            GridView.builder(
-                              itemBuilder: (context, index) {
-                          return liveTrade(bitcoin: _controller.chartData[index]);
+                        ]),
+                    const SizedBox(height: 10),
+                    if (controller.chartData.length > 1)
+                      GridView.builder(
+                        itemBuilder: (context, index) {
+                          return liveTrade(
+                              bitcoin: controller.chartData.value[index]);
                         },
-                        itemCount: _controller.chartData.length,
+                        itemCount: controller.chartData.length,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
@@ -102,9 +99,7 @@ class MainPage extends GetView<MainController> {
                       )
                   ],
                 )),
-              );
-            }
-          ),
+              ))
         ],
       ),
     );

@@ -16,6 +16,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   web_socket_channel:
   syncfusion_flutter_charts: ^19.4.56
+  get: 4.6.0
 
 dev_dependencies:
   flutter_test:
